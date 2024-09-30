@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <br><br><br><br><br><br>
+    <title>Calculadora de Terremotos</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            color: #333;
+            background-image:url(gg.png);
+            padding: 40px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #bce8ff;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            border: 1px solid #0288d1;
+        }
+
+        h1 {
+            text-align: center;
+            color: #0288d1;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #0277bd;
+            display: block;
+            margin-bottom: 8px;
+            font-style: italic;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #0277bd;
+            border-radius: 6px;
+            font-size: 16px;
+            color: #333;
+            background-color: #e3f2fd;
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="number"]:focus {
+            border-color: #01579b;
+            box-shadow: 0 0 8px rgba(1, 87, 155, 0.4);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #0277bd;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #01579b;
+            transform: scale(1.02);
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f1f8e9;
+            border: 2px solid #004d40;
+            border-radius: 8px;
+        }
+
+        .results h3 {
+            color: #004d40;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        .results p {
+            font-size: 18px;
+            margin: 5px 0;
+            color: #333;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        footer a {
+            color: #0288d1;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Calculadora de Terremotos</h1>
+
+    <label for="amplitude">Amplitude máxima (A) em mm:</label>
+    <input type="number" id="amplitude" placeholder="Digite a amplitude (mm)" required>
+
+    <label for="distancia">Distância entre ondas P e S (Δt) em mm:</label>
+    <input type="number" id="distancia" placeholder="Digite a distância (mm)" required>
+
+    <button onclick="calcular()">Calcular Magnitude e Energia</button>
+
+    <div class="results" id="resultados">
+        <!-- Resultados aparecerão aqui -->
+    </div>
+</div>
+
+<footer>
+    <p>Desenvolvido por &copy; 2024 <a href="https://www.instagram.com/marco_032_/">MarcoALR</a></p>
+</footer>
+
+<script>
+    const E0 = 7e-3;  // Constante padrão em kWh
+
+    function calcularMagnitude(A, deltaT) {
+        return Math.log10(A) + 3 * Math.log10(8 * deltaT) - 2.92;
+    }
+
+    function calcularEnergia(M) {
+        return E0 * Math.pow(10, (3 / 2) * M);
+    }
+
+    function efeitoTerremoto(M) {
+        if (M < 3.5) return "Geralmente não sentido, mas gravado.";
+        else if (M >= 3.5 && M <= 5.4) return "Às vezes sentido, mas raramente causa danos.";
+        else if (M >= 5.5 && M <= 6.0) return "No máximo causa pequenos danos a prédios bem construídos.";
+        else if (M >= 6.1 && M <= 6.9) return "Pode ser destrutivo em áreas em torno de até 100 km do epicentro.";
+        else if (M >= 7.0 && M <= 7.9) return "Grande terremoto. Pode causar sérios danos numa grande faixa.";
+        else return "Enorme terremoto. Pode causar graves danos em muitas áreas.";
+    }
+
+    function calcular() {
+        const amplitude = parseFloat(document.getElementById("amplitude").value);
+        const distancia = parseFloat(document.getElementById("distancia").value);
+
+        if (!amplitude || !distancia) {
+            alert("Por favor, insira valores válidos para a amplitude e a distância.");
+            return;
+        }
+
+        // Cálculo da magnitude e energia
+        const M = calcularMagnitude(amplitude, distancia);
+        const E = calcularEnergia(M);
+        const efeito = efeitoTerremoto(M);
+
+        // Exibir resultados
+        document.getElementById("resultados").innerHTML = `
+            <h3>Resultados:</h3>
+            <p><strong>Magnitude (M):</strong> ${M.toFixed(2)}</p>
+            <p><strong>Energia liberada (E):</strong> ${E.toFixed(2)} kWh</p>
+            <p><strong>Efeito:</strong> ${efeito}</p>
+        `;
+    }
+</script>
+
+</body>
+</html>
